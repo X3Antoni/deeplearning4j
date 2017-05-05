@@ -2715,15 +2715,18 @@ public class ComputationGraph implements Serializable, Model {
     /**
      * Evaluate the (single output layer only) network for regression performance
      * @param iterator Data to evaluate on
+     * @param columnNames Column names for the regression evaluation. May be null.
      * @return Regression evaluation
      */
     public RegressionEvaluation evaluateRegression(DataSetIterator iterator, List<String> columnNames) {
         DataSetIterator adsi = iterator.asyncSupported() ? new AsyncDataSetIterator(iterator, 8, true) : iterator;
 
+        RegressionEvaluation evaluation = doEvaluation(adsi, new RegressionEvaluation(columnNames));
+
         if (iterator.asyncSupported())
             ((AsyncDataSetIterator) adsi).shutdown();
 
-        return doEvaluation(adsi, new RegressionEvaluation(columnNames));
+        return evaluation;
     }
 
     /**
